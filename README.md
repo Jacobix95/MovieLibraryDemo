@@ -3,8 +3,8 @@ It is a simple CRUD application that demonstrates basic skills related to databa
 # Language
 Java 21
 # Technologies used
-MySQL
-Doker
-Spring Boot
-JDBC API
-Lombok
+- MySQL
+- Doker
+- Spring Boot
+- JDBC API
+- Lombok
