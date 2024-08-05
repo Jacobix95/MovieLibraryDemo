@@ -14,16 +14,25 @@ Content-Type: application/json
 [
   {
     "title": "Breaking Bad",
-    "rating": "8"
+    "rating": 8
   }
 ]
 
-### MOVIES UPDATE
+### MOVIES UPDATE BY PUT
 
 PUT http://localhost:8080/movies/9
 Content-Type: application/json
 
 {
   "title": "Dr. House",
-  "rating": "5"
+  "rating": 7
+}
+
+### MOVIES UPDATE BY PATCH
+
+PATCH http://localhost:8080/movies/9
+Content-Type: application/json
+
+{
+  "rating": 9
 }
