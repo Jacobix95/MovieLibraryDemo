@@ -43,6 +43,7 @@ public class MovieController {
             return -1;
         }
     }
+
     @PatchMapping("/{id}")
     public int partiallyUpdate(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
         Movie movie = movieRepository.getById(id);
@@ -54,8 +55,13 @@ public class MovieController {
             movieRepository.update(movie);
 
             return 1;
-        } else{
+        } else {
             return -1;
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public int delete(@PathVariable("id") int id) {
+        return movieRepository.delete(id);
     }
 }

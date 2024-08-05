@@ -36,3 +36,7 @@ Content-Type: application/json
 {
   "rating": 9
 }
+
+### MOVIE DELETE
+
+DELETE localhost:8080/movies/10
