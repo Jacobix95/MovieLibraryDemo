@@ -21,4 +21,12 @@ public class MovieRepository {
         return jdbcTemplate.queryForObject("SELECT id, title, rating FROM movie WHERE " +
                 "id=?", BeanPropertyRowMapper.newInstance(Movie.class), id);
     }
+
+    public int save(List<Movie> movies) {
+        movies.forEach(movie -> jdbcTemplate.
+                update("INSERT INTO movie(title, rating) VALUES(?, ?)",
+                        movie.getTitle(), movie.getRating()));
+
+        return 1;
+    }
 }

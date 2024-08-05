@@ -1,0 +1,19 @@
+### MOVIES GET
+
+GET http://localhost:8080/movies
+
+### MOVIES GET BY ID
+
+GET localhost:8080/movies/{{id}}}
+
+### MOVIES ADD
+
+POST http://localhost:8080/movies
+Content-Type: application/json
+
+[
+  {
+    "title": "Breaking Bad",
+    "rating": "8"
+  }
+]

@@ -2,10 +2,7 @@ package com.gitDemo.movieLibraryDemo;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,12 +13,16 @@ public class MovieController {
     @Autowired
     MovieRepository movieRepository;
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<Movie> getAll() {
         return movieRepository.getAll();
     }
     @GetMapping("/{id}")
     public Movie getById(@PathVariable("id") int id) {
         return movieRepository.getById(id);
+    }
+    @PostMapping("")
+    public int add(@RequestBody List<Movie> movies) {
+        return movieRepository.save(movies);
     }
 }
