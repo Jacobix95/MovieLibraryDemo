@@ -4,7 +4,7 @@ GET http://localhost:8080/movies
 
 ### MOVIES GET BY ID
 
-GET localhost:8080/movies/{{id}}}
+GET localhost:8080/movies/2
 
 ### MOVIES ADD
 
@@ -17,3 +17,13 @@ Content-Type: application/json
     "rating": "8"
   }
 ]
+
+### MOVIES UPDATE
+
+PUT http://localhost:8080/movies/9
+Content-Type: application/json
+
+{
+  "title": "Dr. House",
+  "rating": "5"
+}
