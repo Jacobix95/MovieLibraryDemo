@@ -17,10 +17,12 @@ public class MovieController {
     public List<Movie> getAll() {
         return movieRepository.getAll();
     }
+
     @GetMapping("/{id}")
     public Movie getById(@PathVariable("id") int id) {
         return movieRepository.getById(id);
     }
+
     @PostMapping("")
     public int add(@RequestBody List<Movie> movies) {
         return movieRepository.save(movies);
