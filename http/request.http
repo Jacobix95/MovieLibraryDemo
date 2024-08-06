@@ -4,7 +4,7 @@ GET http://localhost:8080/movies
 
 ### MOVIES GET BY ID
 
-GET localhost:8080/movies/2
+GET localhost:8080/movies/{{id}}
 
 ### MOVIES ADD
 
@@ -13,24 +13,24 @@ Content-Type: application/json
 
 [
   {
-    "title": "Breaking Bad",
-    "rating": 8
+    "title": "The Shawshank Redemption",
+    "rating": 10
   }
 ]
 
 ### MOVIES UPDATE BY PUT
 
-PUT http://localhost:8080/movies/9
+PUT http://localhost:8080/movies/{{id}}
 Content-Type: application/json
 
 {
-  "title": "Dr. House",
+  "title": "Harry Potter and the philosopher's stone",
   "rating": 7
 }
 
 ### MOVIES UPDATE BY PATCH
 
-PATCH http://localhost:8080/movies/9
+PATCH http://localhost:8080/movies/{{id}}
 Content-Type: application/json
 
 {
@@ -39,4 +39,4 @@ Content-Type: application/json
 
 ### MOVIE DELETE
 
-DELETE localhost:8080/movies/10
+DELETE localhost:8080/movies/{{id}}

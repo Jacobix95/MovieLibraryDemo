@@ -1,7 +1,8 @@
 package com.gitDemo.movieLibraryDemo;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,59 +10,50 @@ import java.util.List;
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
+    private final MovieService movieService;
 
     @Autowired
-    MovieRepository movieRepository;
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
+    }
 
     @GetMapping("")
-    public List<Movie> getAll() {
-        return movieRepository.getAll();
+    public ResponseEntity<List<Movie>> getAll() {
+        List<Movie> movies = movieService.getAllMovies();
+        return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Movie getById(@PathVariable("id") int id) {
-        return movieRepository.getById(id);
+    public ResponseEntity<Movie> getById(@PathVariable("id") int id) {
+        Movie movie = movieService.getMovieById(id);
+        if (movie != null) {
+            return new ResponseEntity<>(movie, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("")
-    public int add(@RequestBody List<Movie> movies) {
-        return movieRepository.save(movies);
+    public ResponseEntity<Void> add(@RequestBody List<Movie> movies) {
+        movieService.addMovies(movies);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public int update(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
-        Movie movie = movieRepository.getById(id);
-
-        if (movie != null) {
-            movie.setTitle(updatedMovie.getTitle());
-            movie.setRating(updatedMovie.getRating());
-
-            movieRepository.update(movie);
-
-            return 1;
-        } else {
-            return -1;
-        }
+    public ResponseEntity<Void> update(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
+        boolean isUpdated = movieService.updateMovie(id, updatedMovie);
+        return isUpdated ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PatchMapping("/{id}")
-    public int partiallyUpdate(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
-        Movie movie = movieRepository.getById(id);
-
-        if (movie != null) {
-            if (updatedMovie.getTitle() != null) movie.setTitle(updatedMovie.getTitle());
-            if (updatedMovie.getRating() > 0) movie.setRating(updatedMovie.getRating());
-
-            movieRepository.update(movie);
-
-            return 1;
-        } else {
-            return -1;
-        }
+    public ResponseEntity<Void> partiallyUpdate(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
+        boolean isUpdated = movieService.partiallyUpdateMovie(id, updatedMovie);
+        return isUpdated ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    public int delete(@PathVariable("id") int id) {
-        return movieRepository.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
+        boolean isDeleted = movieService.deleteMovie(id);
+        return isDeleted ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
