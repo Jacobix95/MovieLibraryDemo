@@ -1,59 +1,40 @@
 package com.gitDemo.movieLibraryDemo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
-    private final MovieService movieService;
 
     @Autowired
-    public MovieController(MovieService movieService) {
-        this.movieService = movieService;
-    }
+    private MovieService movieService;
 
-    @GetMapping("")
-    public ResponseEntity<List<Movie>> getAll() {
-        List<Movie> movies = movieService.getAllMovies();
-        return new ResponseEntity<>(movies, HttpStatus.OK);
+    @GetMapping
+    public List<Movie> getAllMovies() {
+        return movieService.getMovies();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> getById(@PathVariable("id") int id) {
-        Movie movie = movieService.getMovieById(id);
-        if (movie != null) {
-            return new ResponseEntity<>(movie, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Movie getMovieById(@PathVariable UUID id) {
+        return movieService.getMovieById(id);
     }
 
-    @PostMapping("")
-    public ResponseEntity<Void> add(@RequestBody List<Movie> movies) {
-        movieService.addMovies(movies);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping
+    public int addMovies(@RequestBody List<Movie> movies) {
+        return movieService.addMovies(movies);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
-        boolean isUpdated = movieService.updateMovie(id, updatedMovie);
-        return isUpdated ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Void> partiallyUpdate(@PathVariable("id") int id, @RequestBody Movie updatedMovie) {
-        boolean isUpdated = movieService.partiallyUpdateMovie(id, updatedMovie);
-        return isUpdated ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public int updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
+        movie = new Movie(id, movie.title(), movie.rating(), movie.director(), movie.releaseYear(), movie.genre());
+        return movieService.updateMovie(movie);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
-        boolean isDeleted = movieService.deleteMovie(id);
-        return isDeleted ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public int deleteMovie(@PathVariable UUID id) {
+        return movieService.deleteMovie(id);
     }
 }

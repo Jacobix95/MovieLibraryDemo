@@ -1,54 +1,58 @@
 package com.gitDemo.movieLibraryDemo;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public class MovieRepository implements IMovieRepository {
+public class MovieRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public MovieRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public List<Movie> getAll() {
-        return jdbcTemplate.query("SELECT id, title, rating FROM movie",
-                BeanPropertyRowMapper.newInstance(Movie.class));
+        return jdbcTemplate.query("SELECT id, title, rating, director, release_year, genre FROM movie",
+                new MovieRowMapper());
     }
 
-    @Override
-    public Movie getById(int id) {
+    public Movie getById(UUID id) {
         try {
-            return jdbcTemplate.queryForObject("SELECT id, title, rating FROM movie WHERE id=?",
-                    BeanPropertyRowMapper.newInstance(Movie.class), id);
-        } catch (EmptyResultDataAccessException e) {
+            return jdbcTemplate.queryForObject("SELECT id, title, rating, director, release_year, genre FROM movie WHERE id=?",
+                    new MovieRowMapper(), id.toString());
+        } catch (Exception e) {
             return null;
         }
     }
 
-    @Override
     public int save(List<Movie> movies) {
         movies.forEach(movie -> jdbcTemplate.update(
-                "INSERT INTO movie(title, rating) VALUES(?, ?)",
-                movie.getTitle(), movie.getRating()));
-
+                "INSERT INTO movie(id, title, rating, director, release_year, genre) VALUES(?, ?, ?, ?, ?, ?)",
+                movie.id().toString(),
+                movie.title(),
+                movie.rating(),
+                movie.director().orElse(null),
+                movie.releaseYear().orElse(null),
+                movie.genre().orElse(null)
+        ));
         return movies.size();
     }
 
-    @Override
     public int update(Movie movie) {
         return jdbcTemplate.update(
-                "UPDATE movie SET title=?, rating=? WHERE id=?",
-                movie.getTitle(), movie.getRating(), movie.getId());
+                "UPDATE movie SET title=?, rating=?, director=?, release_year=?, genre=? WHERE id=?",
+                movie.title(),
+                movie.rating(),
+                movie.director().orElse(null),
+                movie.releaseYear().orElse(null),
+                movie.genre().orElse(null),
+                movie.id().toString()
+        );
     }
 
-    @Override
-    public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM movie WHERE id=?", id);
+    public int delete(UUID id) {
+        return jdbcTemplate.update("DELETE FROM movie WHERE id=?", id.toString());
     }
 }

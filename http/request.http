@@ -13,8 +13,12 @@ Content-Type: application/json
 
 [
   {
-    "title": "The Shawshank Redemption",
-    "rating": 10
+    "id": "123e4567-e89b-12d6-a456-426614124000",
+    "title": "Inception",
+    "rating": 9,
+    "director": "Christopher Nolan",
+    "releaseYear": 2010,
+    "genre": "Science Fiction"
   }
 ]
 

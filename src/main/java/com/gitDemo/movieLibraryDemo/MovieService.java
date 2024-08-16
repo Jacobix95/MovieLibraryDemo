@@ -2,23 +2,19 @@ package com.gitDemo.movieLibraryDemo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class MovieService {
-    private final IMovieRepository movieRepository;
-
     @Autowired
-    public MovieService(IMovieRepository movieRepository) {
-        this.movieRepository = movieRepository;
-    }
+    private MovieRepository movieRepository;
 
-    public List<Movie> getAllMovies() {
+    public List<Movie> getMovies() {
         return movieRepository.getAll();
     }
 
-    public Movie getMovieById(int id) {
+    public Movie getMovieById(UUID id) {
         return movieRepository.getById(id);
     }
 
@@ -26,29 +22,11 @@ public class MovieService {
         return movieRepository.save(movies);
     }
 
-    public boolean updateMovie(int id, Movie updatedMovie) {
-        Movie existingMovie = movieRepository.getById(id);
-        if (existingMovie != null) {
-            existingMovie.setTitle(updatedMovie.getTitle());
-            existingMovie.setRating(updatedMovie.getRating());
-            movieRepository.update(existingMovie);
-            return true;
-        }
-        return false;
+    public int updateMovie(Movie movie) {
+        return movieRepository.update(movie);
     }
 
-    public boolean partiallyUpdateMovie(int id, Movie updatedMovie) {
-        Movie existingMovie = movieRepository.getById(id);
-        if (existingMovie != null) {
-            if (updatedMovie.getTitle() != null) existingMovie.setTitle(updatedMovie.getTitle());
-            if (updatedMovie.getRating() > 0) existingMovie.setRating(updatedMovie.getRating());
-            movieRepository.update(existingMovie);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean deleteMovie(int id) {
-        return movieRepository.delete(id) > 0;
+    public int deleteMovie(UUID id) {
+        return movieRepository.delete(id);
     }
 }
