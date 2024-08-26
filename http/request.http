@@ -13,11 +13,11 @@ Content-Type: application/json
 
 [
   {
-    "id": "123e4567-e89b-12d6-a456-426614124000",
-    "title": "Inception",
+    "id": "124e4567-e89b-12d6-a456-426614124000",
+    "title": "Titanic",
     "rating": 9,
     "director": "Christopher Nolan",
-    "releaseYear": 2010,
+    "releaseYear": 1993,
     "genre": "Science Fiction"
   }
 ]
@@ -34,13 +34,13 @@ Content-Type: application/json
 
 ### MOVIES UPDATE BY PATCH
 
-PATCH http://localhost:8080/movies/{{id}}
+PATCH http://localhost:8080/movies/124e4567-e89b-12d6-a456-426614124000
 Content-Type: application/json
 
 {
-  "rating": 9
+  "rating": 3
 }
 
 ### MOVIE DELETE
 
-DELETE localhost:8080/movies/{{id}}
+DELETE localhost:8080/movies/124e4567-e89b-12d6-a456-426614124000
