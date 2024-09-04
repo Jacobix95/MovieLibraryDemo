@@ -64,9 +64,8 @@ public class MovieService {
                 throw new ServiceException("Movie not found");
             }
 
-            // Create a new record with updated fields or existing fields if not updated
             Movie updatedMovie = new Movie(
-                    movie.id(), // ID should remain the same
+                    movie.id(),
                     (String) updates.getOrDefault("title", movie.title()),
                     (Integer) updates.getOrDefault("rating", movie.rating()),
                     Optional.ofNullable((String) updates.getOrDefault("director", movie.director().orElse(null))),
