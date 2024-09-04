@@ -11,7 +11,6 @@ public record Movie(
         Optional<Integer> releaseYear,
         Optional<String> genre
 ) {
-    // Constructor to ensure title is not blank
     public Movie {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title is required");
