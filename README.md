@@ -4,7 +4,8 @@ It is a simple CRUD application that demonstrates basic skills related to databa
 Java 21
 # Technologies used
 - MySQL
-- Doker
+- Docker
+- Flyway
 - Spring Boot
 - JDBC API
 - Lombok
