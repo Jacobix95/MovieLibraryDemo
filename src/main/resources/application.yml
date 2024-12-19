@@ -1,0 +1,23 @@
+app:
+  security:
+    jwt:
+      token:
+        secret: 55efe25ab13568c4ce9b8c2f56b7f91adf7171cf1223fddc88833e6d1b4d150460d48843c2fd5933f8ec6bb2a327e99379e65a66214bd01cf1c7b00b4656e338
+        validity: 12h
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/movielibrarydemo
+    username: user
+    password: testpassword
+  flyway:
+    locations: db/migration/mysql
+    baseline-on-migrate: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect

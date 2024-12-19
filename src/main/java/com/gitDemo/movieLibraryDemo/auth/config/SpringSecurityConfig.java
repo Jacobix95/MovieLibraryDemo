@@ -1,5 +1,8 @@
-package com.gitDemo.movieLibraryDemo.auth;
+package com.gitDemo.movieLibraryDemo.auth.config;
 
+import com.gitDemo.movieLibraryDemo.auth.jwt.JwtTokenFilter;
+import com.gitDemo.movieLibraryDemo.auth.jwt.JwtTokenService;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -17,8 +20,10 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableConfigurationProperties(AuthConfigProperties.class)
 @EnableMethodSecurity(jsr250Enabled = true)
 public class SpringSecurityConfig {
 
@@ -28,14 +33,15 @@ public class SpringSecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint, JwtTokenFilter jwtTokenFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(autz ->
                         autz.requestMatchers(URL_WHITELIST).permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(eh -> eh.authenticationEntryPoint(authenticationEntryPoint));
+                .exceptionHandling(eh -> eh.authenticationEntryPoint(authenticationEntryPoint))
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
 
@@ -71,5 +77,14 @@ public class SpringSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
             Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+    @Bean
+    public JwtTokenFilter jwtTokenFilter(JwtTokenService jwtTokenService, UserDetailsService userDetailsService) {
+        return new JwtTokenFilter(jwtTokenService, userDetailsService);
+    }
+
+    @Bean
+    public JwtTokenService jwtTokenService(AuthConfigProperties authConfigProperties) {
+        return new JwtTokenService(authConfigProperties);
     }
 }
