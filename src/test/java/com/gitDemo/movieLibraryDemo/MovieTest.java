@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
-import java.util.UUID;
 
 class MovieTest {
 
@@ -13,7 +12,7 @@ class MovieTest {
     @DisplayName("Given a valid Movie, When created, Then no exceptions should be thrown")
     void testValidMovieCreation() {
         // Given
-        UUID id = UUID.randomUUID();
+        Long id = 12345678901L;
         String title = "Inception";
         Integer rating = 9;
         Optional<String> director = Optional.of("Christopher Nolan");
@@ -36,7 +35,7 @@ class MovieTest {
     @DisplayName("Given a null or blank title, When Movie is created, Then throw IllegalArgumentException")
     void testInvalidMovieTitle() {
         // Given
-        UUID id = UUID.randomUUID();
+        Long id = 12345678901L;
         Integer rating = 8;
         Optional<String> director = Optional.of("Some Director");
         Optional<Integer> releaseYear = Optional.of(2020);
@@ -57,7 +56,7 @@ class MovieTest {
     @DisplayName("Given Optional fields are missing, When Movie is created, Then defaults to empty Optionals")
     void testMovieWithEmptyOptionalFields() {
         // Given
-        UUID id = UUID.randomUUID();
+        Long id = 12345678901L;
         String title = "The Matrix";
         Integer rating = 10;
 
@@ -75,7 +74,7 @@ class MovieTest {
     @DisplayName("Given valid Movie attributes, When created, Then all values should be set correctly")
     void testMovieAttributes() {
         // Given
-        UUID id = UUID.randomUUID();
+        Long id = 12345633901L;
         String title = "The Dark Knight";
         Integer rating = 9;
         Optional<String> director = Optional.of("Christopher Nolan");

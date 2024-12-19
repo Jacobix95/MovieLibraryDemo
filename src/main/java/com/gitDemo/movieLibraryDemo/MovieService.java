@@ -1,7 +1,5 @@
-
 package com.gitDemo.movieLibraryDemo;
 
-import com.gitDemo.movieLibraryDemo.customException.DatabaseException;
 import com.gitDemo.movieLibraryDemo.customException.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,76 +15,69 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
-    public List<Movie> getMovies() {
+    public List<MovieEntity> getMovies() {
         try {
-            return movieRepository.getAll();
-        } catch (DatabaseException e) {
+            return movieRepository.findAll(); // Changed from getAll() to findAll(), which is provided by JpaRepository
+        } catch (Exception e) {
             throw new ServiceException("Failed to retrieve movies.", e);
-        } catch (Exception e) {
-            throw new ServiceException("An unexpected error occurred while retrieving movies.", e);
         }
     }
 
-    public Movie getMovieById(UUID id) {
+    public MovieEntity getMovieById(Long id) {
         try {
-            return movieRepository.getById(id);
-        } catch (DatabaseException e) {
+            Optional<MovieEntity> movie = movieRepository.findById(id);
+            return movie.orElseThrow(() -> new ServiceException("Movie not found"));
+        } catch (Exception e) {
             throw new ServiceException("Failed to retrieve movie with id: " + id, e);
-        } catch (Exception e) {
-            throw new ServiceException("An unexpected error occurred while retrieving movie with id: " + id, e);
         }
     }
 
-    public int addMovies(List<Movie> movies) {
+    public MovieEntity addMovie(MovieEntity movie) {
         try {
-            return movieRepository.save(movies);
-        } catch (DatabaseException e) {
-            throw new ServiceException("Failed to add movies.", e);
+            return movieRepository.save(movie);
         } catch (Exception e) {
-            throw new ServiceException("An unexpected error occurred while adding movies.", e);
+            throw new ServiceException("Failed to add movie.", e);
         }
     }
 
-    public int updateMovie(Movie movie) {
+    public MovieEntity updateMovie(MovieEntity movie) {
         try {
-            return movieRepository.update(movie);
-        } catch (DatabaseException e) {
-            throw new ServiceException("Failed to update movie with id: " + movie.id(), e);
+            return movieRepository.save(movie);
         } catch (Exception e) {
-            throw new ServiceException("An unexpected error occurred while updating movie with id: " + movie.id(), e);
+            throw new ServiceException("Failed to update movie with id: " + movie.getId(), e);
         }
     }
 
-    public int updateMoviePartially(UUID id, Map<String, Object> updates) {
+    public MovieEntity updateMoviePartially(Long id, Map<String, Object> updates) {
         try {
-            Movie movie = movieRepository.getById(id);
-            if (movie == null) {
-                throw new ServiceException("Movie not found");
+            MovieEntity movie = movieRepository.findById(id)
+                    .orElseThrow(() -> new ServiceException("Movie not found"));
+            if (updates.containsKey("title")) {
+                movie.setTitle((String) updates.get("title"));
             }
-
-            Movie updatedMovie = new Movie(
-                    movie.id(),
-                    (String) updates.getOrDefault("title", movie.title()),
-                    (Integer) updates.getOrDefault("rating", movie.rating()),
-                    Optional.ofNullable((String) updates.getOrDefault("director", movie.director().orElse(null))),
-                    Optional.ofNullable((Integer) updates.getOrDefault("releaseYear", movie.releaseYear().orElse(null))),
-                    Optional.ofNullable((String) updates.getOrDefault("genre", movie.genre().orElse(null)))
-            );
-
-            return movieRepository.update(updatedMovie);
-        } catch (DatabaseException e) {
-            throw new ServiceException("Failed to update movie with id: " + id, e);
+            if (updates.containsKey("rating")) {
+                movie.setRating((Integer) updates.get("rating"));
+            }
+            if (updates.containsKey("director")) {
+                movie.setDirector((String) updates.get("director"));
+            }
+            if (updates.containsKey("releaseYear")) {
+                movie.setReleaseYear((Integer) updates.get("releaseYear"));
+            }
+            if (updates.containsKey("genre")) {
+                movie.setGenre((String) updates.get("genre"));
+            }
+            return movieRepository.save(movie);
+        } catch (Exception e) {
+            throw new ServiceException("An unexpected error occurred while updating the movie", e);
         }
     }
 
-
-    public int deleteMovie(UUID id) {
+    public void deleteMovie(Long id) {
         try {
-            return movieRepository.delete(id);
-        } catch (DatabaseException e) {
-            throw new ServiceException("Failed to delete movie with id: " + id, e);
+            movieRepository.deleteById(id);
         } catch (Exception e) {
-            throw new ServiceException("An unexpected error occurred while deleting movie with id: " + id, e);
+            throw new ServiceException("Failed to delete movie with id: " + id, e);
         }
     }
 }

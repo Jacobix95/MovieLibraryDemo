@@ -1,10 +1,9 @@
 package com.gitDemo.movieLibraryDemo;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public record Movie(
-        UUID id,
+        Long id,
         String title,
         Integer rating,
         Optional<String> director,

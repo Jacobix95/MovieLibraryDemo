@@ -1,4 +1,3 @@
-
 package com.gitDemo.movieLibraryDemo;
 
 import com.gitDemo.movieLibraryDemo.customException.ServiceException;
@@ -7,10 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/movies")
@@ -20,9 +17,9 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
+    public ResponseEntity<List<MovieEntity>> getAllMovies() {
         try {
-            List<Movie> movies = movieService.getMovies();
+            List<MovieEntity> movies = movieService.getMovies();
             return new ResponseEntity<>(movies, HttpStatus.OK);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -30,10 +27,14 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> getMovieById(@PathVariable UUID id) {
+    public ResponseEntity<MovieEntity> getMovieById(@PathVariable Long id) {
         try {
-            Movie movie = movieService.getMovieById(id);
-            return new ResponseEntity<>(movie, HttpStatus.OK);
+            MovieEntity movie = movieService.getMovieById(id);
+            if (movie != null) {
+                return new ResponseEntity<>(movie, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -42,23 +43,21 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> addMovies(@RequestBody List<Movie> movies) {
+    public ResponseEntity<MovieEntity> addMovie(@RequestBody MovieEntity movie) {
         try {
-            int result = movieService.addMovies(movies);
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (ServiceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            MovieEntity savedMovie = movieService.addMovie(movie);
+            return new ResponseEntity<>(savedMovie, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
+    public ResponseEntity<MovieEntity> updateMovie(@PathVariable Long id, @RequestBody MovieEntity movie) {
         try {
-            movie = new Movie(id, movie.title(), movie.rating(), movie.director(), movie.releaseYear(), movie.genre());
-            int result = movieService.updateMovie(movie);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            movie.setId(id);
+            MovieEntity updatedMovie = movieService.updateMovie(movie);
+            return new ResponseEntity<>(updatedMovie, HttpStatus.OK);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -67,10 +66,10 @@ public class MovieController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Integer> updateMoviePartially(@PathVariable UUID id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<MovieEntity> updateMoviePartially(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         try {
-            int result = movieService.updateMoviePartially(id, updates);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            MovieEntity updatedMovie = movieService.updateMoviePartially(id, updates);
+            return new ResponseEntity<>(updatedMovie, HttpStatus.OK);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -78,12 +77,11 @@ public class MovieController {
         }
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Integer> deleteMovie(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         try {
-            int result = movieService.deleteMovie(id);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            movieService.deleteMovie(id);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
