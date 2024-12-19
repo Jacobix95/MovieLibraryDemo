@@ -4,25 +4,25 @@ GET http://localhost:8080/movies
 
 ### MOVIES GET BY ID
 
-GET localhost:8080/movies/1
+GET localhost:8080/movies/{{id}}
 
 ### MOVIES ADD
 
 POST http://localhost:8080/movies
 Content-Type: application/json
 
-  {
-    "title": "Inception",
-    "rating": 10,
-    "director": "Christopher Nolan",
-    "releaseYear": 2010,
-    "genre": "Science Fiction",
-    "version": 1
-  }
+{
+  "title": "Inception",
+  "rating": 10,
+  "director": "Christopher Nolan",
+  "releaseYear": 2010,
+  "genre": "Science Fiction",
+  "version": 1
+}
 
 ### MOVIES UPDATE BY PUT
 
-PUT http://localhost:8080/movies/1
+PUT http://localhost:8080/movies/{{id}}
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### MOVIES UPDATE BY PATCH
 
-PATCH http://localhost:8080/movies/1
+PATCH http://localhost:8080/movies/{{id}}
 Content-Type: application/json
 
 {
@@ -41,4 +41,4 @@ Content-Type: application/json
 
 ### MOVIE DELETE
 
-DELETE localhost:8080/movies/1
+DELETE localhost:8080/movies/{{id}}
