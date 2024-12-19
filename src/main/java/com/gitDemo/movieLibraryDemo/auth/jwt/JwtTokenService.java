@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class JwtTokenService {
@@ -15,6 +16,18 @@ public class JwtTokenService {
 
     public JwtTokenService(AuthConfigProperties authConfigProperties) {
         this.authConfigProperties = authConfigProperties;
+    }
+
+    public String generateJwtToken(String username) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiration = now.plus(authConfigProperties.validity());
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new LdtToDateAdapter(now))
+                .expiration(new LdtToDateAdapter(expiration))
+                .signWith(getKey())
+                .compact();
     }
 
 
@@ -26,11 +39,10 @@ public class JwtTokenService {
         return extractClaims(jwtToken).getExpiration();
     }
 
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
-        boolean isExpired = getExpirationDateFromToken(jwtToken).before(new Date());
-        boolean isUserNameCorrect = getUserNameFromToken(jwtToken).equals(userDetails.getUsername());
-        return isExpired;
+    public boolean validateToken(String jwtToken) {
+        return !getExpirationDateFromToken(jwtToken).before(new Date());
     }
+
 
     private Claims extractClaims(String jwtToken) {
         return Jwts.parser()

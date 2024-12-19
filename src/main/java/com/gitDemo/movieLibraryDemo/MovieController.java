@@ -1,6 +1,7 @@
 package com.gitDemo.movieLibraryDemo;
 
 import com.gitDemo.movieLibraryDemo.customException.ServiceException;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.gitDemo.movieLibraryDemo.auth.config.SpringSecurityConfig.DEVELOPER_READ;
+import static com.gitDemo.movieLibraryDemo.auth.config.SpringSecurityConfig.DEVELOPER_WRITE;
 
 @RestController
 @RequestMapping("/movies")
@@ -17,6 +21,7 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping
+    @RolesAllowed(DEVELOPER_READ)
     public ResponseEntity<List<MovieEntity>> getAllMovies() {
         try {
             List<MovieEntity> movies = movieService.getMovies();
@@ -27,6 +32,7 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
+    @RolesAllowed(DEVELOPER_READ)
     public ResponseEntity<MovieEntity> getMovieById(@PathVariable Long id) {
         try {
             MovieEntity movie = movieService.getMovieById(id);
@@ -43,6 +49,7 @@ public class MovieController {
     }
 
     @PostMapping
+    @RolesAllowed(DEVELOPER_WRITE)
     public ResponseEntity<MovieEntity> addMovie(@RequestBody MovieEntity movie) {
         try {
             MovieEntity savedMovie = movieService.addMovie(movie);
@@ -53,6 +60,7 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
+    @RolesAllowed(DEVELOPER_WRITE)
     public ResponseEntity<MovieEntity> updateMovie(@PathVariable Long id, @RequestBody MovieEntity movie) {
         try {
             movie.setId(id);
@@ -66,6 +74,7 @@ public class MovieController {
     }
 
     @PatchMapping("/{id}")
+    @RolesAllowed(DEVELOPER_WRITE)
     public ResponseEntity<MovieEntity> updateMoviePartially(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         try {
             MovieEntity updatedMovie = movieService.updateMoviePartially(id, updates);
@@ -78,6 +87,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
+    @RolesAllowed(DEVELOPER_WRITE)
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         try {
             movieService.deleteMovie(id);

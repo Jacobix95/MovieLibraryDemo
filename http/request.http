@@ -1,14 +1,17 @@
 ### MOVIES GET
 
 GET http://localhost:8080/movies
+Authorization: Bearer {{auth-token}}
 
 ### MOVIES GET BY ID
 
 GET localhost:8080/movies/{{id}}
+Authorization: Bearer {{auth-token}}
 
 ### MOVIES ADD
 
 POST http://localhost:8080/movies
+Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
 {
@@ -23,6 +26,7 @@ Content-Type: application/json
 ### MOVIES UPDATE BY PUT
 
 PUT http://localhost:8080/movies/{{id}}
+Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
 {
@@ -33,6 +37,7 @@ Content-Type: application/json
 ### MOVIES UPDATE BY PATCH
 
 PATCH http://localhost:8080/movies/{{id}}
+Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
 {
@@ -42,3 +47,30 @@ Content-Type: application/json
 ### MOVIE DELETE
 
 DELETE localhost:8080/movies/{{id}}
+Authorization: Bearer {{auth-token}}
+
+### AUTH
+
+### Login as a user
+
+POST localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "user@mail.com",
+  "password": "usersecret"
+}
+
+> {% client.global.set("auth-token", response.body.token); %}
+
+### Login as an admin
+
+POST localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin@mail.com",
+  "password": "adminsecret"
+}
+
+> {% client.global.set("auth-token", response.body.token); %}
