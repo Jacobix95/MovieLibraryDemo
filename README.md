@@ -1,5 +1,5 @@
 # Movie Library Demo
-It is a simple CRUD application that demonstrates basic skills related to database management.
+It is a CRUD application that demonstrates skills related to database management.
 # Language
 Java 21
 # Technologies used
