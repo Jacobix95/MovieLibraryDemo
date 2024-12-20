@@ -2,6 +2,7 @@ package com.gitDemo.movieLibraryDemo.auth.config;
 
 import com.gitDemo.movieLibraryDemo.auth.jwt.JwtTokenFilter;
 import com.gitDemo.movieLibraryDemo.auth.jwt.JwtTokenService;
+import com.gitDemo.movieLibraryDemo.auth.user.UserRepository;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +24,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Collection;
 
 @Configuration
 @EnableConfigurationProperties(AuthConfigProperties.class)
@@ -49,18 +54,47 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user@mail.com")
-                .password(passwordEncoder.encode("usersecret"))
-                .roles(DEVELOPER_READ)
-                .build();
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return username -> userRepository.findByEmail(username)
+                .map(u -> new UserDetails() {
+                    @Override
+                    public Collection<? extends GrantedAuthority> getAuthorities() {
+                        return u.getRoles().stream()
+                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
+                                .toList();
+                    }
 
-        UserDetails admin = User.withUsername("admin@mail.com")
-                .password(passwordEncoder.encode("adminsecret"))
-                .roles(DEVELOPER_READ, DEVELOPER_WRITE)
-                .build();
+                    @Override
+                    public String getPassword() {
+                        return u.getPassword();
+                    }
 
-        return new InMemoryUserDetailsManager(user, admin);
+                    @Override
+                    public String getUsername() {
+                        return u.getEmail();
+                    }
+
+                    @Override
+                    public boolean isAccountNonExpired() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isAccountNonLocked() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isCredentialsNonExpired() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return true;
+                    }
+                })
+                .orElseThrow(() -> new RuntimeException("Unexpected exception whe building UserDetails"));
     }
 
     @Bean
