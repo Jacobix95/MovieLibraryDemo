@@ -7,6 +7,6 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "app.security.jwt.token")
 public record AuthConfigProperties(
         String secret,
-        Duration validity
-) { }
+        Duration validity) {
+}
 

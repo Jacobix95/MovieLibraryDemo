@@ -112,6 +112,7 @@ public class SpringSecurityConfig {
             Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     public JwtTokenFilter jwtTokenFilter(JwtTokenService jwtTokenService, UserDetailsService userDetailsService) {
         return new JwtTokenFilter(jwtTokenService, userDetailsService);
