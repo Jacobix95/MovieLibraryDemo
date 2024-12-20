@@ -8,5 +8,6 @@ Java 21
 - Docker (IN PROGRESS)
 - Flyway
 - Spring Boot
+- Spring security (JWT)
 - JDBC API
 - Lombok
