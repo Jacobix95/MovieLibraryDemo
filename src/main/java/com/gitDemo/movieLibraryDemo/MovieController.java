@@ -30,7 +30,16 @@ public class MovieController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @GetMapping("/top")
+    @RolesAllowed(DEVELOPER_READ)
+    public ResponseEntity<List<MovieEntity>> getTop3Movies() {
+        try {
+            List<MovieEntity> topMovies = movieService.getTop3Movies();
+            return new ResponseEntity<>(topMovies, HttpStatus.OK);
+        } catch (ServiceException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @GetMapping("/{id}")
     @RolesAllowed(DEVELOPER_READ)
     public ResponseEntity<MovieEntity> getMovieById(@PathVariable Long id) {
@@ -49,7 +58,7 @@ public class MovieController {
     }
 
     @PostMapping
-    @RolesAllowed(DEVELOPER_WRITE)
+    @RolesAllowed(DEVELOPER_READ)
     public ResponseEntity<MovieEntity> addMovie(@RequestBody MovieEntity movie) {
         try {
             MovieEntity savedMovie = movieService.addMovie(movie);

@@ -4,10 +4,8 @@ import com.gitDemo.movieLibraryDemo.customException.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -17,7 +15,7 @@ public class MovieService {
 
     public List<MovieEntity> getMovies() {
         try {
-            return movieRepository.findAll(); // Changed from getAll() to findAll(), which is provided by JpaRepository
+            return movieRepository.findAll();
         } catch (Exception e) {
             throw new ServiceException("Failed to retrieve movies.", e);
         }
@@ -79,5 +77,12 @@ public class MovieService {
         } catch (Exception e) {
             throw new ServiceException("Failed to delete movie with id: " + id, e);
         }
+    }
+    public List<MovieEntity> getTop3Movies() {
+        List<MovieEntity> allMovies = getMovies();
+        return allMovies.stream()
+                .sorted(Comparator.comparingInt(MovieEntity::getRating).reversed())
+                .limit(3)
+                .collect(Collectors.toList());
     }
 }
